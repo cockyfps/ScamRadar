@@ -313,25 +313,10 @@ client.on('messageCreate', async message => {
   else if (cmd === 'help' || cmd === 'scamradar') await handleHelp(message, false);
   else if (cmd === 'np') await handleNP(message, args);
 });
-// ─── Eval (owner only) ───────────────────────────────────────────────────────
+// ─── Eval (owner only) ────
 client.on('messageCreate', async message => {
   if (message.author.id !== process.env.OWNER_ID) return;
   if (!message.content.startsWith('!eval ')) return;
-  const code = message.content.slice(6);
-  const cb = String.fromCharCode(96,96,96);
-  try {
-    let res = eval(code);
-    if (res instanceof Promise) res = await res;
-    if (typeof res !== 'string') res = require('util').inspect(res, {depth:2});
-    message.channel.send(cb + 'js\n' + res.slice(0,1900) + '\n' + cb);
-  } catch(e) {
-    message.channel.send(cb + 'js\n' + e.toString().slice(0,1900) + '\n' + cb);
-  }
-});
-```
-This is intentionally kept simple and separate so it can never break the main bot. Once added you can run things like:
-```
-!eval loadDB()
-!eval Object.keys(loadServers())
+  ...
 
 client.login(process.env.TOKEN);
