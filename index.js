@@ -244,6 +244,7 @@ async function handleNP(message, args) {
   if (sub === 'list') return message.channel.send({ embeds: [npListEmbed(loadNP())] });
   return message.reply(`${emojis.error} Usage: \`np add @user\` | \`np remove @user\` | \`np list\``);
 }
+
 async function handleEval(message, args) {
   if (!isOwner(message.author.id)) return message.reply(`${emojis.error} Only the bot owner can use eval.`);
   const code = args.join(' ');
