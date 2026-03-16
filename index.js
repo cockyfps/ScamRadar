@@ -244,6 +244,35 @@ async function handleNP(message, args) {
   if (sub === 'list') return message.channel.send({ embeds: [npListEmbed(loadNP())] });
   return message.reply(`${emojis.error} Usage: \`np add @user\` | \`np remove @user\` | \`np list\``);
 }
+async function handleEval(message, args) {
+  if (!isOwner(message.author.id)) return message.reply(`${emojis.error} Only the bot owner can use eval.`);
+  const code = args.join(' ');
+  if (!code) return message.reply(`${emojis.error} Usage: \`eval <code>\``);
+  try {
+    let result = eval(code);
+    if (result instanceof Promise) result = await result;
+    if (typeof result !== 'string') result = require('util').inspect(result, { depth: 2 });
+    result = result.replace(new RegExp(process.env.TOKEN, 'g'), '[TOKEN HIDDEN]');
+    if (result.length > 1900) result = result.slice(0, 1900) + '\n... (truncated)';
+    return message.channel.send({ embeds: [
+      new EmbedBuilder().setTitle('⚙️ Eval — Output').setColor(colors.success)
+        .addFields(
+          { name: '📥 Input', value: `\`\`\`js\n${code.slice(0, 900)}\n\`\`\`` },
+          { name: '📤 Output', value: `\`\`\`js\n${result}\n\`\`\`` }
+        )
+        .setFooter({ text: 'ScamRadar • Eval', iconURL: client.user.displayAvatarURL() }).setTimestamp()
+    ]});
+  } catch (err) {
+    return message.channel.send({ embeds: [
+      new EmbedBuilder().setTitle('⚙️ Eval — Error').setColor(colors.danger)
+        .addFields(
+          { name: '📥 Input', value: `\`\`\`js\n${code.slice(0, 900)}\n\`\`\`` },
+          { name: '❌ Error', value: `\`\`\`js\n${err.message}\n\`\`\`` }
+        )
+        .setFooter({ text: 'ScamRadar • Eval', iconURL: client.user.displayAvatarURL() }).setTimestamp()
+    ]});
+  }
+}
 
 async function handleHelp(interaction, isSlash) {
   const embed = new EmbedBuilder()
@@ -281,7 +310,7 @@ const slashCommands = [
 
 client.once('ready', async () => {
   console.log(`✅ ScamRadar is online as ${client.user.tag}`);
-  client.user.setActivity('📡 Scanning for scammers | !help', { type: 3 });
+  client.user.setActivity('📡 Scanning for scammers | .help', { type: 3 });
   const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
   try { await rest.put(Routes.applicationCommands(client.user.id), { body: slashCommands }); console.log('✅ Slash commands registered globally.'); }
   catch (err) { console.error('❌ Failed to register slash commands:', err); }
