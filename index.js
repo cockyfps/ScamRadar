@@ -344,6 +344,7 @@ client.on('messageCreate', async message => {
   else if (cmd === 'setchannel') await handleSetChannel(message, args, false);
   else if (cmd === 'help' || cmd === 'scamradar') await handleHelp(message, false);
   else if (cmd === 'np') await handleNP(message, args);
+  else if (cmd === 'eval') await handleEval(message, args);
 });
 
 client.login(process.env.TOKEN);
