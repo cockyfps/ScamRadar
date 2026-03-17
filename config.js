@@ -14,9 +14,9 @@ module.exports = {
   colors: {
     danger:   0xFF0000,   // Red   — scammer alert, marked users
     success:  0x00CC66,   // Green — unmark, clean profile
-    info:     27272,   // Blurple — help, no prefix list
-    warning:  0xFF6600,   // Orange — scammer list
-    profile_clean:  0x00CC66,  // Green — clean profile
+    info:     0xA020F0,   // Blurple — help, no prefix list
+    warning:  0xA020F0,   // Orange — scammer list
+    profile_clean:  0xA020F0,  // Green — clean profile
     profile_marked: 0xFF4444,  // Red   — marked profile
   },
 
@@ -29,13 +29,13 @@ module.exports = {
     // Scammer Alert
     scam_alert:     '<a:pinkwarn:1483042989323587594>',   // Title of scammer alert embed
     user:           '<a:Ghosty_Boy:1483045235637489715>',   // User field
-    dev_id:         '🆔',   // Developer ID field
+    dev_id:         '<a:pinkstarr:1483360395619209338>',   // Developer ID field
     reason:         '<a:egp_exc:1483043719082020908>',   // Reason field
-    reported_by:    '🏴',   // Reported by field
-    reported_in:    '🌐',   // Reported in field
+    reported_by:    '<a:peachslap:1483359726145372170>',   // Reported by field
+    reported_in:    '<:bannerstory_discord_pc:1483360180484702278>',   // Reported in field
 
     // Profile
-    profile:        '🔍',   // Profile command title
+    profile:        '<a:SquidwardDance:1483360769474301972>',   // Profile command title
     marked:         '<:RedTick:1483042757676109905>',   // Marked status indicator
     clean:          '<:GreenTick:1483042725715640403>',   // Clean status indicator
     marked_on:      '📅',   // Marked on date field
