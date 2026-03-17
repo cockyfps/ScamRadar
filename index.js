@@ -281,12 +281,12 @@ async function handleHelp(interaction, isSlash) {
     .setColor(colors.info)
     .setDescription(' • Made with ❤️ by Forkie')
     .addFields(
-      { name: `${emojis.cmd_mark} Mark a Scammer`, value: '`!mark @user <reason>` or `/mark`\n> Admins & no-prefix users.' },
-      { name: `${emojis.cmd_unmark} Unmark a User`, value: '`!unmark @user` or `/unmark`\n> Admins & no-prefix users.' },
-      { name: `${emojis.cmd_profile} Profile Lookup`, value: '`!profile @user or <ID>` or `/profile`\n> Anyone can use.' },
-      { name: `${emojis.cmd_list} Scammer List`, value: '`!sl [page]` or `!scammerlist [page]` or `/sl`\n> Anyone can use.' },
-      { name: `${emojis.cmd_channel} Set Alert Channel`, value: '`!setchannel #channel` or `/setchannel`\n> Admins only.' },
-      { name: `${emojis.cmd_np} No Prefix System`, value: '`np add @user` | `np remove @user` | `np list`\n> Bot owner only.' }
+      { name: `${emojis.cmd_mark} Mark a Scammer`, value: '`mark @user <reason>` or `/mark`\n> Owner & Admins only.' },
+      { name: `${emojis.cmd_unmark} Unmark a User`, value: '`unmark @user` or `/unmark`\n> Owner & Admins only.' },
+      { name: `${emojis.cmd_profile} Profile Lookup`, value: '`profile @user or <ID>` or `/profile`\n> Anyone can use.' },
+      { name: `${emojis.cmd_list} Scammer List`, value: '`sl [page]` or `scammerlist [page]` or `/sl`\n> Anyone can use.' },
+      { name: `${emojis.cmd_channel} Set Alert Channel`, value: '`setchannel #channel` or `/setchannel`\n> Admins & Owner only.' },
+      { name: `${emojis.cmd_np} No Prefix System`, value: '`np add @user` | `np remove @user` | `np list`\n> Bot Developer only.' }
     )
     .setFooter({ text: 'ScamRadar • Cross-Server Scam Protection', iconURL: client.user.displayAvatarURL() });
   if (isSlash) await interaction.reply({ embeds: [embed] }); else await interaction.channel.send({ embeds: [embed] });
