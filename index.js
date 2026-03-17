@@ -51,7 +51,7 @@ async function broadcastEmbed(embed, originChannelId) {
 
 function scammerAlertEmbed(user, reason, reportedBy, reportedIn, count) {
   return new EmbedBuilder()
-    .setTitle(`${emojis.scam_alert} SCAMMER ALERT`)
+    .setTitle(`${emojis.scam_alert} | SCAMMER ALERT`)
     .setColor(colors.danger)
     .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
     .setDescription(`**${count}.** @${user.username} : \`${user.id}\` (${reason})`)
@@ -70,9 +70,9 @@ function profileEmbed(user, record, evidence) {
   const isMarked = !!record;
   const isTrusted = !!loadTrusted()[user.id];
   let statusVal;
-  if (isMarked) statusVal = `${emojis.marked} **MARKED AS SCAMMER**`;
+  if (isMarked) statusVal = `${emojis.marked} | **MARKED AS SCAMMER**`;
   else if (isTrusted) statusVal = `${emojis.clean} **Verified Trusted Seller**`;
-  else statusVal = `${emojis.clean} **Clean — Not Marked**`;
+  else statusVal = `${emojis.clean} **Clean • Not Marked**`;
 
   const eb = new EmbedBuilder()
     .setTitle(`${emojis.profile} ScamRadar Profile | ${user.tag}`)
@@ -150,15 +150,15 @@ function statsEmbed() {
   const trusted = loadTrusted();
   const totalUsers = client.guilds.cache.reduce((a, g) => a + g.memberCount, 0);
   return new EmbedBuilder()
-    .setTitle(`📊 ScamRadar — Stats`)
+    .setTitle(`<a:gifstorypersonel:1483044538129059863> ScamRadar Stats`)
     .setColor(colors.info)
     .addFields(
-      { name: '🚨 Scammers Marked', value: `\`${Object.keys(scammers).length}\``, inline: true },
+      { name: '<a:pinkwarn:1483042989323587594> Scammers Marked', value: `\`${Object.keys(scammers).length}\``, inline: true },
       { name: '🌐 Connected Servers', value: `\`${Object.keys(servers).length}\``, inline: true },
-      { name: '✅ Trusted Sellers', value: `\`${Object.keys(trusted).length}\``, inline: true },
-      { name: '👥 Users Protected', value: `\`${totalUsers.toLocaleString()}\``, inline: true },
-      { name: '🏓 Ping', value: `\`${client.ws.ping}ms\``, inline: true },
-      { name: '⏱️ Uptime', value: `\`${Math.floor(client.uptime/3600000)}h ${Math.floor((client.uptime%3600000)/60000)}m\``, inline: true }
+      { name: '<a:check:1483043904436834395> Trusted Sellers', value: `\`${Object.keys(trusted).length}\``, inline: true },
+      { name: '<a:SquidwardDance:677260986960445490> Users Protected', value: `\`${totalUsers.toLocaleString()}\``, inline: true },
+      { name: '<:peepoPing:1483375361537478787> Ping', value: `\`${client.ws.ping}ms\``, inline: true },
+      { name: '<a:zba4:1433369289485848617> Uptime', value: `\`${Math.floor(client.uptime/3600000)}h ${Math.floor((client.uptime%3600000)/60000)}m\``, inline: true }
     )
     .setFooter({ text: 'ScamRadar • Cross-Server Scam Protection', iconURL: client.user.displayAvatarURL() })
     .setTimestamp();
@@ -168,7 +168,7 @@ function recentEmbed(scammers) {
   const entries = Object.entries(scammers);
   const recent = entries.sort((a, b) => new Date(b[1].markedAt) - new Date(a[1].markedAt)).slice(0, 5);
   const embed = new EmbedBuilder()
-    .setTitle(`🕐 ScamRadar — Recently Marked`)
+    .setTitle(`<a:pinkwarn:1483042989323587594> Recently Marked`)
     .setColor(colors.warning)
     .setFooter({ text: 'ScamRadar • Cross-Server Scam Protection', iconURL: client.user.displayAvatarURL() })
     .setTimestamp();
@@ -399,7 +399,7 @@ async function handleEvidence(interaction, args, isSlash) {
 
 async function handlePing(interaction, isSlash) {
   const embed = new EmbedBuilder()
-    .setTitle('🏓 Pong!')
+    .setTitle('<:peepoPing:1483375361537478787> | PING')
     .setColor(colors.info)
     .addFields(
       { name: '📡 Websocket Ping', value: `\`${client.ws.ping}ms\``, inline: true },
@@ -561,7 +561,7 @@ client.on('guildMemberAdd', async member => {
     if (!ch) return;
     const record = db[member.id];
     const embed = new EmbedBuilder()
-      .setTitle(`${emojis.scam_alert} MARKED SCAMMER JOINED`)
+      .setTitle(`${emojis.scam_alert} | MARKED SCAMMER JOINED`)
       .setColor(colors.danger)
       .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
       .addFields(
