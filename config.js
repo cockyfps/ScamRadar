@@ -46,7 +46,7 @@ module.exports = {
     list_entry:     '•',    // Bullet for each entry
 
     // Unmark
-    unmark:         '<a:z_verified:1084371802639315004>',   // Unmark embed title
+    unmark:         '<a:check:1483043904436834395>',   // Unmark embed title
     removed_by:     '<a:Ghosty_Boy:1483045235637489715>',   // Removed by field
     action:         '<:bannerstory_red_clear_shield:1483043386364657698>',  // Action field
 
