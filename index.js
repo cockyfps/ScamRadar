@@ -12,7 +12,7 @@ const client = new Client({
   ]
 });
 
-const PREFIX = process.env.PREFIX || '!';
+const PREFIX = process.env.PREFIX || '.';
 const DB_PATH = path.join(__dirname, 'data', 'scammers.json');
 const SERVERS_PATH = path.join(__dirname, 'data', 'servers.json');
 const NP_PATH = path.join(__dirname, 'data', 'noprefix.json');
@@ -40,7 +40,7 @@ async function broadcastAlert(embed, originChannelId) {
 
 function scammerAlertEmbed(user, reason, reportedBy, reportedIn) {
   return new EmbedBuilder()
-    .setTitle(`${emojis.scam_alert} SCAMMER ALERT — ScamRadar`)
+    .setTitle(`${emojis.scam_alert} SCAMMER ALERT`)
     .setColor(colors.danger)
     .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
     .addFields(
@@ -57,7 +57,7 @@ function scammerAlertEmbed(user, reason, reportedBy, reportedIn) {
 function profileEmbed(user, record) {
   const isMarked = !!record;
   return new EmbedBuilder()
-    .setTitle(`${emojis.profile} ScamRadar Profile — ${user.tag}`)
+    .setTitle(`${emojis.profile} ScamRadar Profile | ${user.tag}`)
     .setColor(isMarked ? colors.profile_marked : colors.profile_clean)
     .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
     .addFields(
@@ -85,7 +85,7 @@ function scammerListEmbed(scammers, page = 1) {
     .setColor(colors.warning)
     .setFooter({ text: `Page ${page}/${totalPages} • ${entries.length} total scammers • ScamRadar`, iconURL: client.user.displayAvatarURL() })
     .setTimestamp();
-  if (slice.length === 0) { embed.setDescription(`${emojis.success} No scammers have been marked yet.`); }
+  if (slice.length === 0) { embed.setDescription(`${emojis.success} | No scammers have been marked yet.`); }
   else {
     embed.setDescription(slice.map(([id, r], i) =>
       `**${(page-1)*perPage+i+1}.** \`${id}\` — **${r.tag}**\n> ${emojis.reason} ${r.reason} | ${emojis.marked_on} <t:${Math.floor(new Date(r.markedAt).getTime()/1000)}:d>`
@@ -96,7 +96,7 @@ function scammerListEmbed(scammers, page = 1) {
 
 function unmarkEmbed(user, removedBy) {
   return new EmbedBuilder()
-    .setTitle(`${emojis.unmark} Scammer Removed — ScamRadar`)
+    .setTitle(`${emojis.unmark} | Scammer Removed From The Scammer List`)
     .setColor(colors.success)
     .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
     .addFields(
@@ -112,7 +112,7 @@ function unmarkEmbed(user, removedBy) {
 function npListEmbed(npUsers) {
   const entries = Object.entries(npUsers);
   const embed = new EmbedBuilder()
-    .setTitle(`${emojis.np_title} ScamRadar — No Prefix List`)
+    .setTitle(`${emojis.np_title} No Prefix List`)
     .setColor(colors.info)
     .setFooter({ text: `${entries.length} users • ScamRadar`, iconURL: client.user.displayAvatarURL() })
     .setTimestamp();
@@ -124,19 +124,19 @@ function npListEmbed(npUsers) {
 async function handleMark(interaction, args, isSlash) {
   const authorId = isSlash ? interaction.user.id : interaction.author.id;
   if (!isAdminOrOwner(authorId, interaction.member) && !isNP(authorId)) {
-    const msg = `${emojis.error} You need Administrator permission to mark scammers.`;
+    const msg = `${emojis.error} | **You need Administrator permission to mark scammers.**`;
     return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg);
   }
   let targetId, reason;
   if (isSlash) { const t = interaction.options.getUser('user'); reason = interaction.options.getString('reason'); targetId = t.id; }
   else { targetId = args[0]?.replace(/[<@!>]/g, ''); reason = args.slice(1).join(' '); }
   if (!targetId || !reason) {
-    const msg = `${emojis.error} Usage: \`mark @user <reason>\``;
+    const msg = `${emojis.error} | **Usage: \`mark @user <reason>**\``;
     return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg);
   }
   let targetUser;
   try { targetUser = await client.users.fetch(targetId); } catch {
-    const msg = `${emojis.error} Could not find that user.`;
+    const msg = `${emojis.error} | Could not find that user.`;
     return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg);
   }
   const db = loadDB();
@@ -151,14 +151,14 @@ async function handleMark(interaction, args, isSlash) {
 async function handleUnmark(interaction, args, isSlash) {
   const authorId = isSlash ? interaction.user.id : interaction.author.id;
   if (!isAdminOrOwner(authorId, interaction.member) && !isNP(authorId)) {
-    const msg = `${emojis.error} You need Administrator permission to unmark users.`;
+    const msg = `${emojis.error} | You need Administrator permission to unmark users.`;
     return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg);
   }
   let targetId;
   if (isSlash) { targetId = interaction.options.getUser('user').id; } else { targetId = args[0]?.replace(/[<@!>]/g, ''); }
-  if (!targetId) { const msg = `${emojis.error} Please provide a user to unmark.`; return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg); }
+  if (!targetId) { const msg = `${emojis.error} | Please provide a user to unmark.`; return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg); }
   const db = loadDB();
-  if (!db[targetId]) { const msg = `${emojis.warning} That user is not in the scammer list.`; return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg); }
+  if (!db[targetId]) { const msg = `${emojis.warning} | That user is not in the scammer list.`; return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg); }
   const targetUser = await client.users.fetch(targetId).catch(() => null);
   delete db[targetId]; saveDB(db);
   const remover = isSlash ? interaction.user : interaction.author;
@@ -167,7 +167,7 @@ async function handleUnmark(interaction, args, isSlash) {
     if (isSlash) await interaction.reply({ embeds: [embed] }); else await interaction.channel.send({ embeds: [embed] });
     await broadcastAlert(embed, interaction.channel?.id);
   } else {
-    const msg = `${emojis.success} User \`${targetId}\` removed from the scammer list.`;
+    const msg = `${emojis.success} User \`${targetId}\` | removed from the scammer list.`;
     if (isSlash) await interaction.reply({ content: msg }); else await interaction.reply(msg);
   }
 }
@@ -176,10 +176,10 @@ async function handleProfile(interaction, args, isSlash) {
   let targetId;
   if (isSlash) { const u = interaction.options.getUser('user', false); const id = interaction.options.getString('id', false); targetId = u?.id || id; }
   else { targetId = args[0]?.replace(/[<@!>]/g, ''); }
-  if (!targetId) { const msg = `${emojis.error} Usage: \`profile @user\` or \`profile <ID>\``; return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg); }
+  if (!targetId) { const msg = `${emojis.error} | Usage: \`profile @user\` or \`profile <ID>\``; return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg); }
   if (isSlash) await interaction.deferReply();
   let targetUser;
-  try { targetUser = await client.users.fetch(targetId); } catch { const msg = `${emojis.error} Could not find that user.`; return isSlash ? interaction.editReply(msg) : interaction.reply(msg); }
+  try { targetUser = await client.users.fetch(targetId); } catch { const msg = `${emojis.error} | Could not find that user.`; return isSlash ? interaction.editReply(msg) : interaction.reply(msg); }
   const embed = profileEmbed(targetUser, loadDB()[targetId] || null);
   if (isSlash) await interaction.editReply({ embeds: [embed] }); else await interaction.channel.send({ embeds: [embed] });
 }
@@ -193,46 +193,46 @@ async function handleScammerList(interaction, args, isSlash) {
 async function handleSetChannel(interaction, args, isSlash) {
   const authorId = isSlash ? interaction.user.id : interaction.author.id;
   if (!isAdminOrOwner(authorId, interaction.member) && !isNP(authorId)) {
-    const msg = `${emojis.error} You need Administrator permission to set the alert channel.`;
+    const msg = `${emojis.error} | You need Administrator permission to set the alert channel.`;
     return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg);
   }
   const channelId = isSlash ? interaction.options.getChannel('channel').id : interaction.mentions.channels.first()?.id;
-  if (!channelId) { const msg = `${emojis.error} Usage: \`setchannel #channel\``; return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg); }
+  if (!channelId) { const msg = `${emojis.error} | Usage: \`setchannel #channel\``; return isSlash ? interaction.reply({ content: msg, ephemeral: true }) : interaction.reply(msg); }
   const servers = loadServers(); servers[interaction.guild.id] = channelId; saveServers(servers);
-  const msg = `${emojis.success} Alert channel set to <#${channelId}>! This server will now receive scam alerts.`;
+  const msg = `${emojis.success} | Alert channel set to <#${channelId}> • This server will now receive scam alerts.`;
   if (isSlash) await interaction.reply({ content: msg }); else await interaction.reply(msg);
 }
 
 async function handleNP(message, args) {
-  if (!isOwner(message.author.id)) return message.reply(`${emojis.error} Only the bot owner can manage the no prefix list.`);
+  if (!isOwner(message.author.id)) return message.reply(`${emojis.error} | **Only the bot owner can manage the no prefix list.**`);
   const sub = args[0]?.toLowerCase();
   if (sub === 'add') {
     const targetId = args[1]?.replace(/[<@!>]/g, '');
-    if (!targetId) return message.reply(`${emojis.error} Usage: \`np add @user\` or \`np add <ID>\``);
+    if (!targetId) return message.reply(`${emojis.error} | Usage: \`np add @user\` or \`np add <ID>\``);
     let targetUser;
-    try { targetUser = await client.users.fetch(targetId); } catch { return message.reply(`${emojis.error} Could not find that user.`); }
+    try { targetUser = await client.users.fetch(targetId); } catch { return message.reply(`${emojis.error} | Could not find that user.`); }
     const np = loadNP();
-    if (np[targetId]) return message.reply(`${emojis.warning} **${targetUser.tag}** is already in the no prefix list.`);
+    if (np[targetId]) return message.reply(`${emojis.warning} **${targetUser.tag}** | is already in the no prefix list.`);
     np[targetId] = { tag: targetUser.tag, addedAt: new Date().toISOString() }; saveNP(np);
     return message.channel.send({ embeds: [
-      new EmbedBuilder().setTitle(`${emojis.np_title} No Prefix — User Added`).setColor(colors.success)
+      new EmbedBuilder().setTitle(`${emojis.np_title} No Prefix • User Added`).setColor(colors.success)
         .setThumbnail(targetUser.displayAvatarURL({ dynamic: true, size: 256 }))
         .addFields(
           { name: `${emojis.user} User`, value: targetUser.tag, inline: true },
           { name: `${emojis.dev_id} Developer ID`, value: `\`${targetId}\``, inline: true },
-          { name: `${emojis.np_added} Status`, value: 'Can now use commands without prefix', inline: false }
+          { name: `${emojis.np_added} Status`, value: ' • Can now use commands without prefix', inline: false }
         )
         .setFooter({ text: 'ScamRadar • No Prefix System', iconURL: client.user.displayAvatarURL() }).setTimestamp()
     ]});
   }
   if (sub === 'remove') {
     const targetId = args[1]?.replace(/[<@!>]/g, '');
-    if (!targetId) return message.reply(`${emojis.error} Usage: \`np remove @user\` or \`np remove <ID>\``);
+    if (!targetId) return message.reply(`${emojis.error} | Usage: \`np remove @user\` or \`np remove <ID>\``);
     const np = loadNP();
-    if (!np[targetId]) return message.reply(`${emojis.warning} That user is not in the no prefix list.`);
+    if (!np[targetId]) return message.reply(`${emojis.warning} | That user is not in the no prefix list.`);
     const tag = np[targetId].tag; delete np[targetId]; saveNP(np);
     return message.channel.send({ embeds: [
-      new EmbedBuilder().setTitle(`${emojis.np_title} No Prefix — User Removed`).setColor(colors.danger)
+      new EmbedBuilder().setTitle(`${emojis.np_title} No Prefix • User Removed`).setColor(colors.danger)
         .addFields(
           { name: `${emojis.user} User`, value: tag, inline: true },
           { name: `${emojis.dev_id} Developer ID`, value: `\`${targetId}\``, inline: true },
@@ -242,13 +242,13 @@ async function handleNP(message, args) {
     ]});
   }
   if (sub === 'list') return message.channel.send({ embeds: [npListEmbed(loadNP())] });
-  return message.reply(`${emojis.error} Usage: \`np add @user\` | \`np remove @user\` | \`np list\``);
+  return message.reply(`${emojis.error} | Usage: \`np add @user\` | \`np remove @user\` | \`np list\``);
 }
 
 async function handleEval(message, args) {
-  if (!isOwner(message.author.id)) return message.reply(`${emojis.error} Only the bot owner can use eval.`);
+  if (!isOwner(message.author.id)) return message.reply(`${emojis.error} | **Only the bot owner can use eval.**`);
   const code = args.join(' ');
-  if (!code) return message.reply(`${emojis.error} Usage: \`eval <code>\``);
+  if (!code) return message.reply(`${emojis.error} | Usage: \`eval <code>\``);
   try {
     let result = eval(code);
     if (result instanceof Promise) result = await result;
@@ -256,7 +256,7 @@ async function handleEval(message, args) {
     result = result.replace(new RegExp(process.env.TOKEN, 'g'), '[TOKEN HIDDEN]');
     if (result.length > 1900) result = result.slice(0, 1900) + '\n... (truncated)';
     return message.channel.send({ embeds: [
-      new EmbedBuilder().setTitle('⚙️ Eval — Output').setColor(colors.success)
+      new EmbedBuilder().setTitle('Eval • Output').setColor(colors.success)
         .addFields(
           { name: '📥 Input', value: `\`\`\`js\n${code.slice(0, 900)}\n\`\`\`` },
           { name: '📤 Output', value: `\`\`\`js\n${result}\n\`\`\`` }
@@ -265,7 +265,7 @@ async function handleEval(message, args) {
     ]});
   } catch (err) {
     return message.channel.send({ embeds: [
-      new EmbedBuilder().setTitle('⚙️ Eval — Error').setColor(colors.danger)
+      new EmbedBuilder().setTitle('⚙️ Eval • Error').setColor(colors.danger)
         .addFields(
           { name: '📥 Input', value: `\`\`\`js\n${code.slice(0, 900)}\n\`\`\`` },
           { name: '❌ Error', value: `\`\`\`js\n${err.message}\n\`\`\`` }
@@ -277,9 +277,9 @@ async function handleEval(message, args) {
 
 async function handleHelp(interaction, isSlash) {
   const embed = new EmbedBuilder()
-    .setTitle(`${emojis.help_title} ScamRadar — Command List`)
+    .setTitle(`${emojis.help_title} **Command List**`)
     .setColor(colors.info)
-    .setDescription('ScamRadar protects your community by sharing scammer reports across all connected servers.')
+    .setDescription(' • Made with ❤️ by Forkie')
     .addFields(
       { name: `${emojis.cmd_mark} Mark a Scammer`, value: '`!mark @user <reason>` or `/mark`\n> Admins & no-prefix users.' },
       { name: `${emojis.cmd_unmark} Unmark a User`, value: '`!unmark @user` or `/unmark`\n> Admins & no-prefix users.' },
@@ -288,8 +288,7 @@ async function handleHelp(interaction, isSlash) {
       { name: `${emojis.cmd_channel} Set Alert Channel`, value: '`!setchannel #channel` or `/setchannel`\n> Admins only.' },
       { name: `${emojis.cmd_np} No Prefix System`, value: '`np add @user` | `np remove @user` | `np list`\n> Bot owner only.' }
     )
-    .setFooter({ text: 'ScamRadar • Cross-Server Scam Protection', iconURL: client.user.displayAvatarURL() })
-    .setTimestamp();
+    .setFooter({ text: 'ScamRadar • Cross-Server Scam Protection', iconURL: client.user.displayAvatarURL() });
   if (isSlash) await interaction.reply({ embeds: [embed] }); else await interaction.channel.send({ embeds: [embed] });
 }
 
