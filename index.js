@@ -12,7 +12,7 @@ const client = new Client({
 });
 
 const PREFIX = process.env.PREFIX || '.';
-const PAYPAL = process.env.PAYPAL_ME || 'https://paypal.me/yourlink';
+const PAYPAL = process.env.PAYPAL_ME || 'https://paypal.me/nuclya';
 const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
 const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
